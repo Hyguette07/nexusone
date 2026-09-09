@@ -1,0 +1,24 @@
+# Secrets and local env
+.env
+.env.local
+.env.*.local
+!.env.example
+
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+
+**/target/
+**/node_modules/
+**/.next/
+**/out/
+**/dist/
+**/__pycache__/
+**/.venv/
+**/*.pyc
+**/*.db
+**/data/
+*.log
+coverage/
