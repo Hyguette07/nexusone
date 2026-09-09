@@ -17,8 +17,11 @@ Thumbs.db
 **/dist/
 **/__pycache__/
 **/.venv/
+**/.pytest_cache/
 **/*.pyc
 **/*.db
 **/data/
 *.log
 coverage/
+htmlcov/
+.coverage

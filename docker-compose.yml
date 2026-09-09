@@ -1,0 +1,49 @@
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: sqlite:///./data/nexusone.db
+      REDIS_URL: redis://redis:6379/0
+      REDIS_OPTIONAL: "true"
+      SECRET_KEY: ${SECRET_KEY:-replace-with-a-long-random-secret-at-least-32}
+      JWT_EXPIRE_MINUTES: ${JWT_EXPIRE_MINUTES:-1440}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3005}
+      APP_SEED_PASSWORD: ${APP_SEED_PASSWORD:-ChangeMe123!}
+      SEED_DEMO_DATA: "true"
+    ports:
+      - "8085:8085"
+    volumes:
+      - nexusone_data:/app/data
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8085/api/v1}
+        NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL:-ws://localhost:8085/ws/incidents}
+    ports:
+      - "3005:3005"
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8085/api/v1}
+      NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL:-ws://localhost:8085/ws/incidents}
+    depends_on:
+      - api
+
+volumes:
+  nexusone_data:

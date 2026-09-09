@@ -1,0 +1,48 @@
+name: NexusOne CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Test
+        run: pytest
+        env:
+          SECRET_KEY: ci-secret-key-which-is-at-least-32-chars
+          DATABASE_URL: sqlite:///./data/test_nexusone.db
+          APP_SEED_PASSWORD: ChangeMe123!
+          SEED_DEMO_DATA: "true"
+          REDIS_OPTIONAL: "true"
+          REDIS_URL: redis://127.0.0.1:1/0
+          NEXUSONE_TESTING: "1"
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test -- --run
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8085/api/v1
+          NEXT_PUBLIC_WS_URL: ws://localhost:8085/ws/incidents

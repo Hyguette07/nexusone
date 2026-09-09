@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --charcoal: #121417;
+  --signal: #ff5a1f;
+  --paper: #f3efe6;
+}
+
+body {
+  color: var(--paper);
+  background-color: var(--charcoal);
+  background-image:
+    linear-gradient(rgba(255, 90, 31, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 90, 31, 0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.font-display {
+  font-family: var(--font-display), system-ui, sans-serif;
+}
+
+.font-sans {
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+input,
+select,
+textarea {
+  background: #0d1014;
+  color: var(--paper);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 1px solid var(--signal);
+}
